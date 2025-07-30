@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Prompt Architect | Companion App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #e2e8f0;
+            color: #1a202c;
+            transform: translateX(4px);
+        }
+        .form-input, .form-textarea {
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.3s ease-in-out;
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: #4a5568;
+            box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.2);
+        }
+        .btn-primary {
+            background-color: #2d3748;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1a202c;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen bg-white">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-50 border-r border-gray-200 p-6 hidden md:block">
+            <h1 class="text-2xl font-bold text-gray-800 mb-8">The Prompt Architect</h1>
+            <nav class="space-y-2">
+                <a href="#generator" class="sidebar-link active flex items-center p-3 rounded-lg text-gray-700 font-medium">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 14h.01M9 11h.01M12 11h.01M15 11h.01M5.85 18.15a2.25 2.25 0 013.182 0l2.666 2.667a2.25 2.25 0 010 3.182L5.85 24.85a2.25 2.25 0 01-3.182 0l-2.667-2.667a2.25 2.25 0 010-3.182l5.85-5.85z"></path></svg>
+                    Worksheet Generator
+                </a>
+                <a href="#bonus-templates" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 font-medium">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v1h-14v-1zM19 8h-14a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-8a2 2 0 00-2-2z"></path></svg>
+                    Bonus Templates
+                </a>
+                <a href="#examples" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 font-medium">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Interactive Examples
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-100">
+            <div class="p-4 md:p-8">
+                <!-- Section: Worksheet Generator -->
+                <section id="generator" class="page-section">
+                     <div class="bg-white p-8 rounded-2xl shadow-lg w-full mx-auto">
+                        <header class="text-center mb-10">
+                            <h2 class="text-3xl font-bold text-gray-900">Songbuilding Worksheet Generator</h2>
+                            <p class="text-lg text-gray-600 mt-2">Fill out the form below to generate a printable PDF of your song blueprint.</p>
+                        </header>
+                        <div id="song-form">
+                            <!-- STEP 1: Foundation -->
+                            <div class="mb-12">
+                                <h3 class="text-xl font-bold border-b-2 border-gray-200 pb-3 mb-6">STEP 1: Set the Song's Foundation</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div><label for="genre" class="block text-sm font-semibold mb-1">🎵 Song Genre</label><input type="text" id="genre" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Lo-fi, Pop, Rock, EDM"></div>
+                                    <div><label for="emotion" class="block text-sm font-semibold mb-1">❤️ Emotion or Theme</label><input type="text" id="emotion" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Love, Loss, Empowerment"></div>
+                                    <div><label for="message" class="block text-sm font-semibold mb-1">💡 Message/Purpose</label><input type="text" id="message" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Overcoming trauma"></div>
+                                    <div><label for="narrator" class="block text-sm font-semibold mb-1">👤 Narrator or Voice</label><input type="text" id="narrator" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., A wise old man"></div>
+                                    <div><label for="tempo" class="block text-sm font-semibold mb-1">⏱️ Tempo (BPM Range)</label><input type="text" id="tempo" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Slow (60-80 BPM)"></div>
+                                    <div><label for="instruments" class="block text-sm font-semibold mb-1">🎹 Key Instruments</label><input type="text" id="instruments" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Piano, 808s"></div>
+                                    <div class="md:col-span-2"><label for="style" class="block text-sm font-semibold mb-1">🎨 Style Notes / Mood</label><input type="text" id="style" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm" placeholder="e.g., Dreamy synth-pop"></div>
+                                </div>
+                            </div>
+                            <!-- STEP 2: Lyrics -->
+                            <div class="mb-12">
+                                <h3 class="text-xl font-bold border-b-2 border-gray-200 pb-3 mb-6">STEP 2: Write Your Lyric Blueprint</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                    <div><label for="verse1" class="block text-sm font-semibold mb-1">Verse 1</label><textarea id="verse1" rows="4" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea></div>
+                                    <div><label for="chorus" class="block text-sm font-semibold mb-1">Chorus</label><textarea id="chorus" rows="4" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea></div>
+                                    <div><label for="verse2" class="block text-sm font-semibold mb-1">Verse 2</label><textarea id="verse2" rows="4" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea></div>
+                                    <div><label for="bridge" class="block text-sm font-semibold mb-1">Bridge</label><textarea id="bridge" rows="4" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea></div>
+                                    <div class="md:col-span-2"><label for="outro" class="block text-sm font-semibold mb-1">Outro</label><textarea id="outro" rows="2" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea></div>
+                                </div>
+                            </div>
+                            <!-- STEP 3: Prompt -->
+                            <div class="mb-12">
+                                 <h3 class="text-xl font-bold border-b-2 border-gray-200 pb-3 mb-6">STEP 3: Create Your Master Prompt</h3>
+                                 <p class="text-sm text-gray-600 bg-gray-100 p-3 rounded-md mb-4"><span class="font-semibold">Example:</span> "Create a [genre] song with [instrument]s and a [tempo] beat, inspired by [emotion/theme]..."</p>
+                                 <label for="prompt" class="block text-sm font-semibold mb-1">Your Custom Prompt</label>
+                                 <textarea id="prompt" rows="5" class="form-textarea w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></textarea>
+                            </div>
+                            <!-- STEP 4: Final Notes -->
+                            <div class="mb-12">
+                                <h3 class="text-xl font-bold border-b-2 border-gray-200 pb-3 mb-6">STEP 4: Title & Final Notes</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div><label for="title" class="block text-sm font-semibold mb-1">Song Title Idea(s)</label><input type="text" id="title" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></div>
+                                    <div><label for="visuals" class="block text-sm font-semibold mb-1">Visuals/Scene Inspiration</label><input type="text" id="visuals" class="form-input w-full bg-gray-50 border-gray-300 rounded-md shadow-sm"></div>
+                                </div>
+                            </div>
+                            <!-- Generate Button -->
+                            <div class="text-center mt-8"><button id="generate-pdf" class="btn-primary font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">Generate PDF</button></div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Section: Bonus Templates -->
+                <section id="bonus-templates" class="page-section hidden">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg w-full mx-auto">
+                        <header class="mb-10">
+                            <h2 class="text-3xl font-bold text-gray-900">Bonus Content & Advanced Templates</h2>
+                            <p class="text-lg text-gray-600 mt-2">Exclusive templates for purchasers of "The Prompt Architect".</p>
+                        </header>
+                        <div class="space-y-8">
+                            <div class="p-6 border border-gray-200 rounded-lg">
+                                <h3 class="text-xl font-bold mb-2">Template: Sound Design for Film</h3>
+                                <p class="text-gray-600 mb-4">A worksheet focused on generating atmospheric soundscapes, foley, and character-specific musical motifs for visual media.</p>
+                                <button id="generate-film-pdf" class="font-medium text-indigo-600 hover:text-indigo-800">Download PDF &rarr;</button>
+                            </div>
+                            <div class="p-6 border border-gray-200 rounded-lg">
+                                <h3 class="text-xl font-bold mb-2">Template: Virtual Instrument Design</h3>
+                                <p class="text-gray-600 mb-4">Learn to prompt for unique, playable virtual instruments by defining their physical characteristics, materials, and emotional timbre.</p>
+                                <button id="generate-instrument-pdf" class="font-medium text-indigo-600 hover:text-indigo-800">Download PDF &rarr;</button>
+                            </div>
+                             <div class="p-6 border border-gray-200 rounded-lg">
+                                <h3 class="text-xl font-bold mb-2">Advanced Technique: Prompt Chaining</h3>
+                                <p class="text-gray-600 mb-4">A guide on how to use the output of one prompt as the input for another to build complex, evolving musical compositions step-by-step.</p>
+                                <button id="show-guide" class="font-medium text-indigo-600 hover:text-indigo-800">Read Guide &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Section: Interactive Examples -->
+                <section id="examples" class="page-section hidden">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg w-full mx-auto">
+                        <header class="mb-10">
+                            <h2 class="text-3xl font-bold text-gray-900">Interactive Examples</h2>
+                            <p class="text-lg text-gray-600 mt-2">See how small changes in a prompt can dramatically alter the musical output.</p>
+                        </header>
+                        <div class="space-y-6">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <p class="font-mono text-sm bg-gray-100 p-3 rounded">"lo-fi hip hop beat, rainy day, coffee shop"</p>
+                                <div class="mt-3 flex items-center gap-4">
+                                    <button class="btn-primary text-sm py-2 px-4 rounded-md">▶️ Play Result</button>
+                                    <p class="text-sm text-gray-600">A classic, mellow beat. Predictable but effective.</p>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <p class="font-mono text-sm bg-gray-100 p-3 rounded">"lo-fi hip hop, **recorded on a cassette tape in a dusty attic**, rainy Tuesday, abandoned coffee shop, **subtle vinyl crackle**, melancholic piano melody"</p>
+                                <div class="mt-3 flex items-center gap-4">
+                                    <button class="btn-primary text-sm py-2 px-4 rounded-md">▶️ Play Result</button>
+                                    <p class="text-sm text-gray-600">Notice the added texture, atmosphere, and emotional depth from the specific details.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal for Guide -->
+    <div id="guide-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Advanced Technique: Prompt Chaining</h3>
+                <button id="close-guide" class="text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+            <div class="space-y-4 text-gray-700">
+                <p>Prompt chaining is a powerful method for building complex compositions by using the output of one generation as the input for the next. This creates a logical and cohesive musical evolution.</p>
+                <div>
+                    <h4 class="font-semibold">Step 1: Generate a Foundation</h4>
+                    <p class="font-mono text-sm bg-gray-100 p-2 rounded mt-1">"gritty, 90s boom-bap drum loop, 90 bpm, vinyl crackle"</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Step 2: Add a Layer Referencing the Foundation</h4>
+                    <p class="font-mono text-sm bg-gray-100 p-2 rounded mt-1">"a deep, sub-bassline with a simple, groovy rhythm that locks in perfectly with a gritty, 90s boom-bap drum loop"</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Step 3: Continue Layering with More Detail</h4>
+                    <p class="font-mono text-sm bg-gray-100 p-2 rounded mt-1">"a melancholic, jazzy piano melody, played with a soft touch, floating over a gritty boom-bap beat and a deep sub-bassline"</p>
+                </div>
+                <p>By referencing the previously generated elements, you guide the AI to create parts that fit together naturally, as if they were composed in the same session.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { jsPDF } = window.jspdf;
+            const pageW = (new jsPDF()).internal.pageSize.getWidth();
+            const margin = 15;
+            const addTitle = (doc, text, y) => {
+                doc.setFont('Helvetica', 'bold'); doc.setFontSize(18);
+                doc.text(text, pageW / 2, y, { align: 'center' }); return y + 8;
+            };
+            const addSubtitle = (doc, text, y) => {
+                doc.setFont('Helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(150);
+                doc.text(text, pageW / 2, y, { align: 'center' }); return y + 12;
+            };
+            const addSectionHeader = (doc, text, y) => {
+                doc.setFont('Helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(40);
+                doc.text(text, margin, y); y += 2; doc.setDrawColor(220);
+                doc.line(margin, y, pageW - margin, y); return y + 8;
+            };
+            const addField = (doc, label, y) => {
+                if (y > 270) { doc.addPage(); y = margin; }
+                doc.setFont('Helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(40);
+                doc.text(label, margin, y);
+                doc.setFont('Courier', 'normal'); doc.setFontSize(10); doc.setTextColor(80);
+                doc.text('________________________________', margin + 60, y); return y + 10;
+            };
+            const addTextArea = (doc, label, y, lines = 3) => {
+                 if (y > 250) { doc.addPage(); y = margin; }
+                doc.setFont('Helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(40);
+                doc.text(label, margin, y); y += 6;
+                doc.setDrawColor(220);
+                for(let i=0; i < lines; i++) {
+                    doc.line(margin, y + (i*6), pageW - margin, y + (i*6));
+                }
+                return y + (lines * 6) + 8;
+            };
+            // --- Main Worksheet PDF Generation ---
+            document.getElementById('generate-pdf').addEventListener('click', () => {
+                const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                const getVal = (id) => document.getElementById(id).value || '________________';
+                const formData = {
+                    genre: getVal('genre'), emotion: getVal('emotion'), message: getVal('message'),
+                    narrator: getVal('narrator'), tempo: getVal('tempo'), instruments: getVal('instruments'),
+                    style: getVal('style'), verse1: getVal('verse1'), chorus: getVal('chorus'),
+                    verse2: getVal('verse2'), bridge: getVal('bridge'), outro: getVal('outro'),
+                    prompt: getVal('prompt'), title: getVal('title'), visuals: getVal('visuals'),
+                };
+                
+                let y = margin;
+                y = addTitle(doc, 'The Prompt Architect', y);
+                y = addSubtitle(doc, 'Complete Songbuilding Worksheet', y);
+                y = addSectionHeader(doc, "STEP 1: Foundation", y);
+                
+                const addFilledField = (doc, label, value, y) => {
+                    if (y > 270) { doc.addPage(); y = margin; }
+                    doc.setFont('Helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(40);
+                    doc.text(label, margin, y);
+                    doc.setFont('Courier', 'normal'); doc.setFontSize(10); doc.setTextColor(80);
+                    doc.text(value, margin + 55, y); return y + 10;
+                };
+                 const addFilledTextArea = (doc, label, value, y) => {
+                    if (y > 250) { doc.addPage(); y = margin; }
+                    doc.setFont('Helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(40);
+                    doc.text(label, margin, y); y += 6;
+                    doc.setFont('Courier', 'normal'); doc.setFontSize(10); doc.setTextColor(80);
+                    const splitText = doc.splitTextToSize(value, pageW - (margin * 2));
+                    doc.text(splitText, margin, y); return y + (splitText.length * 4) + 8;
+                };
+                y = addFilledField(doc, '🎵 Song Genre:', formData.genre, y); 
+                y = addFilledField(doc, '❤️ Emotion/Theme:', formData.emotion, y);
+                y = addFilledField(doc, '💡 Message/Purpose:', formData.message, y); 
+                y = addFilledField(doc, '👤 Narrator/Voice:', formData.narrator, y);
+                y = addFilledField(doc, '⏱️ Tempo (BPM):', formData.tempo, y); 
+                y = addFilledField(doc, '🎹 Key Instruments:', formData.instruments, y);
+                y = addFilledField(doc, '🎨 Style Notes:', formData.style, y);
+                y = addSectionHeader(doc, "STEP 2: Lyric Blueprint", y);
+                y = addFilledTextArea(doc, 'Verse 1:', formData.verse1, y); 
+                y = addFilledTextArea(doc, 'Chorus:', formData.chorus, y);
+                y = addFilledTextArea(doc, 'Verse 2:', formData.verse2, y); 
+                y = addFilledTextArea(doc, 'Bridge:', formData.bridge, y);
+                y = addFilledTextArea(doc, 'Outro:', formData.outro, y);
+                y = addSectionHeader(doc, "STEP 3: Master Prompt", y);
+                y = addFilledTextArea(doc, 'Your Custom Prompt:', formData.prompt, y);
+                y = addSectionHeader(doc, "STEP 4: Final Notes", y);
+                y = addFilledField(doc, 'Song Title Idea(s):', formData.title, y); 
+                y = addFilledField(doc, 'Visuals/Inspiration:', formData.visuals, y);
+                doc.save('Prompt-Architect-Worksheet.pdf');
+            });
+            // --- Bonus Template PDF Generation ---
+            document.getElementById('generate-film-pdf').addEventListener('click', () => {
+                const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                let y = margin;
+                y = addTitle(doc, 'Bonus Template', y);
+                y = addSubtitle(doc, 'Sound Design for Film', y);
+                y = addSectionHeader(doc, "Scene & Emotion", y);
+                y = addTextArea(doc, 'Scene Description:', y, 4);
+                y = addField(doc, 'Emotional Tone / Mood:', y);
+                y = addField(doc, 'Time of Day / Location:', y);
+                y = addSectionHeader(doc, "Sonic Elements", y);
+                y = addTextArea(doc, 'Key Atmospheric Sounds:', y, 3);
+                y = addTextArea(doc, 'Required Foley Sounds:', y, 3);
+                y = addTextArea(doc, 'Character Musical Motifs:', y, 3);
+                y = addSectionHeader(doc, "Master Prompt", y);
+                y = addTextArea(doc, 'Your Custom Prompt:', y, 5);
+                doc.save('Film-Sound-Design-Worksheet.pdf');
+            });
+            document.getElementById('generate-instrument-pdf').addEventListener('click', () => {
+                const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                let y = margin;
+                y = addTitle(doc, 'Bonus Template', y);
+                y = addSubtitle(doc, 'Virtual Instrument Design', y);
+                y = addSectionHeader(doc, "Core Concept", y);
+                y = addField(doc, 'Instrument Family:', y);
+                y = addField(doc, 'Emotional Timbre:', y);
+                y = addSectionHeader(doc, "Physicality & Sound", y);
+                y = addTextArea(doc, 'Primary Materials:', y, 2);
+                y = addTextArea(doc, 'Playing Style / Articulation:', y, 2);
+                y = addField(doc, 'Sonic Environment / Reverb:', y);
+                y = addSectionHeader(doc, "Master Prompt", y);
+                y = addTextArea(doc, 'Your Custom Prompt:', y, 5);
+                doc.save('Virtual-Instrument-Worksheet.pdf');
+            });
+            
+            // --- Guide Modal Logic ---
+            const guideModal = document.getElementById('guide-modal');
+            document.getElementById('show-guide').addEventListener('click', () => {
+                guideModal.classList.remove('hidden');
+                setTimeout(() => guideModal.classList.remove('opacity-0'), 10);
+            });
+            document.getElementById('close-guide').addEventListener('click', () => {
+                guideModal.classList.add('opacity-0');
+                setTimeout(() => guideModal.classList.add('hidden'), 300);
+            });
+
+            // --- Navigation Logic ---
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('.page-section');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
