@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.promptarchitect.glasses"
+    namespace = "com.pricelens.glasses"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.promptarchitect.glasses"
+        applicationId = "com.pricelens.glasses"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -50,6 +50,11 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material-icons-extended")
+
+    // ViewModel + lifecycle-aware state collection, and coroutines for the scan pipeline.
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // Android XR runtime + Jetpack Compose Glimmer — the AI Glasses UI toolkit.
     implementation("androidx.xr.runtime:runtime:1.0.0-alpha14")

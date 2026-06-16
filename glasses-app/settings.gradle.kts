@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PromptArchitectGlasses"
+rootProject.name = "PriceLens"
 include(":app")
