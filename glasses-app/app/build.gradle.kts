@@ -14,6 +14,14 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        // Pricing API key is supplied as a Gradle property (e.g. in ~/.gradle/gradle.properties)
+        // so it never lands in source control. Falls back to empty -> pricing shows "set key".
+        buildConfigField(
+            "String",
+            "SERPAPI_KEY",
+            "\"${(project.findProperty("serpApiKey") as String? ?: "")}\"",
+        )
     }
 
     buildTypes {
@@ -37,6 +45,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -55,6 +64,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    // CameraX: live camera feed + per-frame analysis for recognition.
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0")
+
+    // On-device object recognition (image labeling).
+    implementation("com.google.mlkit:image-labeling:17.0.9")
 
     // Android XR runtime + Jetpack Compose Glimmer — the AI Glasses UI toolkit.
     implementation("androidx.xr.runtime:runtime:1.0.0-alpha14")

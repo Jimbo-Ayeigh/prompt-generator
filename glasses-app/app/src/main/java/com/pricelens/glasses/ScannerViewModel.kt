@@ -1,7 +1,10 @@
 package com.pricelens.glasses
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,5 +50,15 @@ class ScannerViewModel(
         _history.value = (listOf(item) + _history.value)
             .distinctBy { it.recognized.id }
             .take(3)
+    }
+
+    companion object {
+        /** Builds the ViewModel with concrete camera/pricing backends injected. */
+        fun factory(
+            recognizer: ObjectRecognizer,
+            pricing: PricingService,
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ScannerViewModel(recognizer, pricing) }
+        }
     }
 }

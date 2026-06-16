@@ -23,10 +23,14 @@ camera frame ──▶ ObjectRecognizer ──▶ RecognizedObject ──▶ Pri
 - **`ScannerScreen`** renders the live result as a Glimmer `Card`, with a `VerticalList`
   of recent finds.
 
-Both backends are interfaces with **demo implementations** (`DemoObjectRecognizer`,
-`DemoPricingService`) so the app runs and demonstrates the full flow without camera, ML,
-or network — it cycles through sample items (sneakers, a graded card, appliances) and
-shows canned prices.
+The app ships with **real** implementations wired in by default:
+
+- **`MlKitObjectRecognizer`** runs CameraX `ImageAnalysis` frames through ML Kit on-device
+  image labeling, publishing a new `RecognizedObject` only when the in-view object changes.
+- **`SerpApiPricingService`** queries SerpApi's Google Shopping engine for a live price.
+
+Each is an interface, so **demo fallbacks** (`DemoObjectRecognizer`, `DemoPricingService`)
+remain available for offline previews/tests without camera, ML, or network.
 
 ## Project layout
 
@@ -38,25 +42,38 @@ glasses-app/
     ├── build.gradle.kts             // SDK levels + Glimmer/XR + lifecycle/coroutines
     ├── src/main/AndroidManifest.xml // CAMERA + INTERNET permissions
     └── src/main/java/com/pricelens/glasses/
-        ├── MainActivity.kt          // entry point + GlimmerTheme
+        ├── MainActivity.kt          // entry point + GlimmerTheme + camera-permission gate
         ├── Model.kt                 // RecognizedObject / PriceState / ScanState
         ├── Recognition.kt           // ObjectRecognizer + DemoObjectRecognizer
-        ├── Pricing.kt               // PricingService + DemoPricingService
-        ├── ScannerViewModel.kt      // orchestration
+        ├── CameraRecognition.kt     // MlKitObjectRecognizer + CameraX binding
+        ├── Pricing.kt               // PricingService + SerpApi + Demo
+        ├── ScannerViewModel.kt      // orchestration + injection factory
         └── ScannerScreen.kt         // Glimmer overlay UI
 ```
 
-## Making it real
+## Pricing API key
 
-1. **Recognition** — replace `DemoObjectRecognizer` with a camera-backed implementation:
-   feed frames from the glasses camera (CameraX / the Jetpack XR camera APIs) into an
-   on-device model — ML Kit Object Detection / Image Labeling, a custom TFLite classifier,
-   or a barcode scanner — and emit a `RecognizedObject` only when the in-view object
-   changes (debounce to avoid flicker).
-2. **Pricing** — replace `DemoPricingService` with a call to a marketplace / pricing API
-   (eBay, StockX, a price-comparison service) keyed off the label or scanned barcode; add
-   a short-lived cache.
-3. Request the **CAMERA** permission at runtime before starting the recognizer.
+`SerpApiPricingService` reads `BuildConfig.SERPAPI_KEY`, populated from a Gradle property
+so the key never enters source control. Add it to your **global** Gradle properties
+(`~/.gradle/gradle.properties`):
+
+```properties
+serpApiKey=YOUR_SERPAPI_KEY
+```
+
+Without a key, the price card shows "Set serpApiKey to enable pricing" — recognition still
+works. Get a free key at serpapi.com, or swap `SerpApiPricingService` for another
+marketplace API (eBay, StockX, …) by changing the endpoint and JSON field extraction.
+
+## Going further
+
+- **Finer identity** — the default ML Kit labeler returns generic categories ("Shoe").
+  For exact products, train a custom image-labeling model or add a product-search backend
+  / barcode scanner; `MlKitObjectRecognizer` is the only file that changes.
+- **Caching** — add a short-lived cache in front of `SerpApiPricingService` to avoid
+  re-querying the same label.
+- **Glasses camera** — on real Android XR hardware, point CameraX at (or replace it with)
+  the Jetpack XR camera APIs; the `ObjectRecognizer` seam stays the same.
 
 ## Build & run
 
