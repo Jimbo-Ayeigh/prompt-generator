@@ -2,11 +2,14 @@ package com.pricelens.glasses
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 
 /**
  * Resolves an estimated market price for a recognised object.
@@ -65,6 +68,44 @@ class SerpApiPricingService(
         } catch (e: Exception) {
             PriceState.Unavailable(e.message ?: "Lookup failed")
         }
+    }
+}
+
+/**
+ * Wraps a [PricingService] with a short-lived in-memory cache keyed by object id.
+ *
+ * Only successful ([PriceState.Available]) results are cached, so a transient failure or
+ * a "no price found" is retried next time rather than being stuck for the whole TTL.
+ * Access is guarded by a [Mutex] since lookups run concurrently from the scan pipeline.
+ */
+class CachingPricingService(
+    private val delegate: PricingService,
+    private val ttlMillis: Long = TimeUnit.MINUTES.toMillis(5),
+    private val now: () -> Long = System::currentTimeMillis,
+) : PricingService {
+
+    private data class Entry(val price: PriceState, val expiresAt: Long)
+
+    private val mutex = Mutex()
+    private val cache = mutableMapOf<String, Entry>()
+
+    override suspend fun priceFor(item: RecognizedObject): PriceState {
+        val key = item.id
+
+        mutex.withLock {
+            val cached = cache[key]
+            when {
+                cached == null -> Unit
+                cached.expiresAt > now() -> return cached.price
+                else -> cache.remove(key) // expired
+            }
+        }
+
+        val price = delegate.priceFor(item)
+        if (price is PriceState.Available) {
+            mutex.withLock { cache[key] = Entry(price, now() + ttlMillis) }
+        }
+        return price
     }
 }
 

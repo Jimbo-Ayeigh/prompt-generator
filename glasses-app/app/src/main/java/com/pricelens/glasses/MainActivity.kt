@@ -62,7 +62,9 @@ fun PriceLensApp() {
 @Composable
 private fun ScannerRoute() {
     val recognizer = rememberCameraRecognizer()
-    val pricing = remember { SerpApiPricingService(BuildConfig.SERPAPI_KEY) }
+    val pricing = remember {
+        CachingPricingService(SerpApiPricingService(BuildConfig.SERPAPI_KEY))
+    }
     val scannerViewModel: ScannerViewModel = viewModel(
         factory = ScannerViewModel.factory(recognizer, pricing),
     )

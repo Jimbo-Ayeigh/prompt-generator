@@ -70,8 +70,9 @@ marketplace API (eBay, StockX, …) by changing the endpoint and JSON field extr
 - **Finer identity** — the default ML Kit labeler returns generic categories ("Shoe").
   For exact products, train a custom image-labeling model or add a product-search backend
   / barcode scanner; `MlKitObjectRecognizer` is the only file that changes.
-- **Caching** — add a short-lived cache in front of `SerpApiPricingService` to avoid
-  re-querying the same label.
+- **Caching** — `CachingPricingService` already fronts the pricing API with a 5-minute
+  in-memory TTL cache (successful results only); adjust `ttlMillis` or add persistence
+  if you want it to survive process death.
 - **Glasses camera** — on real Android XR hardware, point CameraX at (or replace it with)
   the Jetpack XR camera APIs; the `ObjectRecognizer` seam stays the same.
 
