@@ -1,0 +1,9 @@
+<resources>
+    <!--
+      A Compose-only activity needs a minimal platform theme; GlimmerTheme drives all
+      in-app styling. NoActionBar + a fullscreen-friendly base suits AI glasses surfaces.
+    -->
+    <style name="Theme.PromptArchitectGlasses" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>
