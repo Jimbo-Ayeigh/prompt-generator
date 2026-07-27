@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JIMBO G — thamanwhosoldtheworld | Music · AI Video · Storytelling</title>
+<meta name="description" content="Jimbo G — multidisciplinary artist, AI media innovator, podcaster, and DJ. 20+ years underground. Stream the music, see the AI video pipeline, and read the story.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     JIMBO G — "TAPE DECK" DESIGN SYSTEM
+     Side A (analog · amber) vs Side B (AI · signal blue)
+     ============================================================ */
+  :root{
+    --ink:#0B0907;
+    --ink-2:#14100C;
+    --ink-3:#1C1712;
+    --paper:#F2EDE4;
+    --muted:#9C927F;
+    --faint:#5E564A;
+    --amber:#F0961E;
+    --amber-hot:#FFB53E;
+    --amber-dim:#8a5a17;
+    --signal:#5B8CFF;
+    --signal-hot:#8FB0FF;
+    --signal-dim:#2c4587;
+    --line:#2A241D;
+    --max:1240px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:17px;line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--amber);color:var(--ink)}
+  a{color:inherit}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+  img{max-width:100%;display:block}
+
+  .mono{font-family:'Space Mono',monospace}
+  .display{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:.9;letter-spacing:-.015em}
+
+  /* film grain over everything */
+  body::after{
+    content:"";position:fixed;inset:-50%;z-index:200;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    animation:grain 8s steps(10) infinite;
+  }
+  @keyframes grain{
+    0%,100%{transform:translate(0,0)} 10%{transform:translate(-3%,2%)}
+    30%{transform:translate(2%,-4%)} 50%{transform:translate(-4%,-2%)}
+    70%{transform:translate(3%,3%)} 90%{transform:translate(-2%,4%)}
+  }
+
+  /* ---------- TAPE PROGRESS (scroll) ---------- */
+  .tapebar{
+    position:fixed;top:0;left:0;right:0;height:3px;z-index:120;
+    background:var(--ink-3);
+  }
+  .tapebar i{
+    display:block;height:100%;width:0;
+    background:linear-gradient(90deg,var(--amber),var(--signal));
+  }
+  .counter{
+    position:fixed;bottom:18px;right:18px;z-index:110;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;
+    color:var(--muted);background:rgba(11,9,7,.8);border:1px solid var(--line);
+    padding:7px 12px;backdrop-filter:blur(8px);
+    display:flex;gap:10px;align-items:center;
+  }
+  .counter b{color:var(--amber);font-weight:400}
+  @media (max-width:760px){.counter{display:none}}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:3px;left:0;right:0;z-index:100;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 24px;
+    background:rgba(11,9,7,.85);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .logo{
+    font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:.06em;
+    text-decoration:none;display:flex;align-items:center;gap:12px;
+  }
+  nav .logo span{color:var(--amber)}
+  .rec{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.2em}
+  .rec::before{
+    content:"";width:8px;height:8px;border-radius:50%;background:#e0402f;
+    animation:blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  nav ul{display:flex;gap:20px;list-style:none}
+  nav ul a{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.08em;
+    text-decoration:none;color:var(--muted);text-transform:uppercase;
+    transition:color .18s;
+  }
+  nav ul a:hover{color:var(--amber)}
+  .nav-toggle{display:none;background:none;border:1px solid var(--line);color:var(--paper);font-family:'Space Mono',monospace;font-size:12px;padding:8px 12px;cursor:pointer;text-transform:uppercase;letter-spacing:.08em}
+
+  /* ---------- HERO ---------- */
+  header{
+    min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    padding:120px 24px 0;
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(1000px 500px at 12% -5%,rgba(240,150,30,.10),transparent 60%),
+      radial-gradient(900px 520px at 95% 108%,rgba(91,140,255,.10),transparent 60%);
+  }
+  /* faint console rules */
+  header::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px);
+    background-size:100% 96px;
+    -webkit-mask-image:linear-gradient(#000,transparent 85%);
+            mask-image:linear-gradient(#000,transparent 85%);
+  }
+  .hero-inner{max-width:var(--max);margin:0 auto;width:100%;position:relative;z-index:2}
+  .hero-eyebrow{
+    font-family:'Space Mono',monospace;font-size:13px;color:var(--amber);
+    letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .hero-eyebrow::before{content:"";width:36px;height:1px;background:var(--amber)}
+  .hero-eyebrow em{color:var(--muted);font-style:normal}
+
+  h1.display{
+    font-size:clamp(66px,13.5vw,200px);
+    margin-bottom:2px;position:relative;
+  }
+  h1 .g{color:var(--amber);position:relative}
+  /* ghost duplicate — the "AI double" */
+  h1 .ghost{
+    position:absolute;left:3px;top:3px;width:100%;color:transparent;
+    -webkit-text-stroke:1px var(--signal-dim);z-index:-1;user-select:none;
+  }
+  .hero-alias{
+    font-family:'Space Mono',monospace;font-size:clamp(13px,1.8vw,18px);
+    color:var(--muted);letter-spacing:.3em;text-transform:uppercase;
+    margin-bottom:40px;display:flex;align-items:center;gap:14px;
+  }
+  .hero-alias::after{content:"";flex:1;max-width:220px;height:1px;background:var(--line)}
+
+  .hero-roles{
+    display:flex;flex-wrap:wrap;gap:0;max-width:860px;
+    border:1px solid var(--line);background:rgba(20,16,12,.5);
+  }
+  .hero-roles div{
+    flex:1 1 33%;min-width:200px;
+    padding:20px 22px;border-right:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .hero-roles div:last-child{border-right:none}
+  .hero-roles div::after{
+    content:"";position:absolute;left:0;bottom:0;height:2px;width:0;
+    background:var(--amber);transition:width .45s var(--ease);
+  }
+  .hero-roles div:nth-child(2)::after{background:var(--signal)}
+  .hero-roles div:hover::after{width:100%}
+  .hero-roles .num{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.1em}
+  .hero-roles .role{font-weight:700;font-size:16px}
+  .hero-roles div:nth-child(1) .num{color:var(--amber)}
+  .hero-roles div:nth-child(2) .num{color:var(--signal)}
+  .hero-roles div:nth-child(3) .num{color:var(--amber)}
+
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+  .btn{
+    font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    text-decoration:none;padding:16px 26px;border:1px solid var(--line);color:var(--paper);
+    display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;
+    transition:color .25s var(--ease),border-color .25s var(--ease);
+  }
+  .btn::before{
+    content:"";position:absolute;inset:0;background:var(--amber);
+    transform:translateY(101%);transition:transform .3s var(--ease);z-index:-1;
+  }
+  .btn-amber{background:var(--amber);color:var(--ink);border-color:var(--amber);font-weight:700}
+  .btn-amber::before{background:var(--amber-hot);transform:translateY(101%)}
+  .btn-amber:hover::before{transform:translateY(0)}
+  .btn-ghost::before{background:var(--signal)}
+  .btn-ghost:hover{color:var(--ink);border-color:var(--signal)}
+  .btn-ghost:hover::before{transform:translateY(0)}
+
+  /* VU meter wall */
+  .vu{
+    display:flex;align-items:flex-end;gap:3px;height:76px;
+    margin-top:52px;
+    -webkit-mask-image:linear-gradient(90deg,#000 70%,transparent);
+            mask-image:linear-gradient(90deg,#000 70%,transparent);
+  }
+  .vu i{
+    display:block;flex:1;max-width:7px;background:linear-gradient(to top,var(--amber-dim),var(--amber) 70%,var(--amber-hot));
+    border-radius:1px;animation:pulse 1.3s ease-in-out infinite;transform-origin:bottom;
+  }
+  .vu i:nth-child(4n){background:linear-gradient(to top,var(--signal-dim),var(--signal) 70%,var(--signal-hot))}
+  @keyframes pulse{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+
+  /* ticker */
+  .ticker-wrap{
+    overflow:hidden;border-top:1px solid var(--line);
+    padding:16px 0;margin-top:auto;position:relative;z-index:2;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  }
+  .ticker{display:flex;white-space:nowrap;animation:scroll 30s linear infinite;width:max-content}
+  .ticker span{
+    font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);padding-right:30px;
+  }
+  .ticker span::after{content:"◆";color:var(--amber);padding-left:30px;font-size:9px;vertical-align:2px}
+  .ticker span:nth-child(even)::after{color:var(--signal)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- SECTION CHROME ---------- */
+  section{padding:110px 24px;border-bottom:1px solid var(--line);position:relative}
+  .wrap{max-width:var(--max);margin:0 auto;position:relative}
+  /* big index number watermark */
+  .idx{
+    position:absolute;top:-38px;right:0;
+    font-family:'Archivo Black',sans-serif;font-size:clamp(80px,12vw,160px);
+    color:transparent;-webkit-text-stroke:1px var(--line);line-height:1;
+    user-select:none;pointer-events:none;
+  }
+  .side-label{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.2em;
+    text-transform:uppercase;margin-bottom:16px;display:inline-flex;align-items:center;gap:10px;
+    padding:7px 14px;border:1px solid currentColor;
+  }
+  .side-label::before{content:"";width:7px;height:7px;background:currentColor}
+  .side-a .side-label{color:var(--amber)}
+  .side-b .side-label{color:var(--signal)}
+  h2.display{font-size:clamp(38px,6.5vw,80px);margin-bottom:18px}
+  .section-intro{max-width:660px;color:var(--muted);font-size:18px;margin-bottom:60px}
+  .section-intro strong{color:var(--paper)}
+  .section-intro a{color:var(--amber)}
+
+  /* ---------- LISTEN / PLATFORM DECK ---------- */
+  .platforms{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);
+  }
+  .platform{
+    background:var(--ink);padding:30px 26px;text-decoration:none;
+    display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;
+    transition:background .25s var(--ease);
+  }
+  .platform::after{
+    content:"→";position:absolute;right:22px;bottom:20px;
+    font-family:'Space Mono',monospace;color:var(--amber);
+    transform:translateX(-8px);opacity:0;transition:all .25s var(--ease);
+  }
+  .platform:hover{background:var(--ink-3)}
+  .platform:hover::after{transform:none;opacity:1}
+  .platform .p-name{font-family:'Archivo Black',sans-serif;font-size:22px;text-transform:uppercase;line-height:1}
+  .platform .p-handle{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+  .platform .p-tag{font-family:'Space Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+  .platform.pri{background:var(--amber);color:var(--ink)}
+  .platform.pri .p-handle,.platform.pri .p-tag{color:rgba(11,9,7,.65)}
+  .platform.pri::after{color:var(--ink);opacity:1;transform:none}
+  .platform.pri:hover{background:var(--amber-hot)}
+
+  /* ---------- TRACKLIST ---------- */
+  .tracklist{border-top:1px solid var(--line)}
+  .track{
+    display:grid;grid-template-columns:70px 1fr auto;
+    gap:20px;align-items:baseline;
+    padding:24px 8px;border-bottom:1px solid var(--line);
+    text-decoration:none;position:relative;
+    transition:background .18s,padding-left .25s var(--ease);
+  }
+  .track::before{
+    content:"▶";position:absolute;left:8px;top:50%;transform:translateY(-50%) scale(.6);
+    color:var(--amber);opacity:0;font-size:12px;transition:all .25s var(--ease);
+  }
+  .track:hover{background:var(--ink-2);padding-left:34px}
+  .track:hover::before{opacity:1;transform:translateY(-50%) scale(1)}
+  .track .no{font-family:'Space Mono',monospace;font-size:13px;color:var(--amber)}
+  .track .t-title{font-weight:700;font-size:clamp(18px,2.4vw,25px)}
+  .track .t-sub{display:block;font-weight:400;font-size:14px;color:var(--muted);margin-top:3px}
+  .track .t-meta{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.06em;text-align:right;text-transform:uppercase}
+
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:40px}
+  .chips span{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.05em;
+    padding:9px 15px;border:1px solid var(--line);color:var(--muted);
+    transition:all .2s var(--ease);
+  }
+  .side-a .chips span:hover{border-color:var(--amber);color:var(--amber);transform:translateY(-2px)}
+  .side-b .chips span:hover{border-color:var(--signal);color:var(--signal);transform:translateY(-2px)}
+
+  /* ---------- CLIENT FEATURE ---------- */
+  .client-feature{
+    display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center;
+    border:1px solid var(--signal-dim);
+    background:linear-gradient(120deg,var(--ink-2),rgba(44,69,135,.18));
+    padding:36px;margin-bottom:52px;text-decoration:none;color:inherit;
+    position:relative;overflow:hidden;transition:border-color .25s;
+  }
+  .client-feature:hover{border-color:var(--signal)}
+  .client-feature::after{
+    content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(91,140,255,.22),transparent 70%);
+    pointer-events:none;
+  }
+  .client-feature .cf-label{
+    font-family:'Space Mono',monospace;font-size:11px;color:var(--signal);
+    letter-spacing:.16em;text-transform:uppercase;
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    border-left:1px solid var(--signal-dim);padding-left:14px;
+  }
+  .client-feature h3{font-family:'Archivo Black',sans-serif;font-size:clamp(24px,3.5vw,42px);text-transform:uppercase;margin-bottom:8px}
+  .client-feature .cf-x{color:var(--signal)}
+  .client-feature p{color:var(--muted);font-size:16px;max-width:540px}
+  .client-feature .cf-stat{text-align:right;position:relative;z-index:1}
+  .client-feature .cf-num{font-family:'Archivo Black',sans-serif;font-size:clamp(46px,6vw,78px);color:var(--signal);line-height:1}
+  .client-feature .cf-lbl{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:8px}
+  @media (max-width:760px){
+    .client-feature{grid-template-columns:1fr;gap:20px;padding:26px}
+    .client-feature .cf-label{writing-mode:horizontal-tb;transform:none;border-left:none;padding-left:0;border-bottom:1px solid var(--signal-dim);padding-bottom:10px}
+    .client-feature .cf-stat{text-align:left}
+  }
+
+  /* ---------- PIPELINE / SIGNAL CHAIN ---------- */
+  .pipeline{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);
+    counter-reset:stage;
+  }
+  .pipeline article{
+    background:var(--ink);padding:30px 26px;position:relative;
+    transition:background .25s var(--ease);
+  }
+  .pipeline article:hover{background:var(--ink-2)}
+  .pipeline article::before{
+    counter-increment:stage;content:"0" counter(stage);
+    position:absolute;top:18px;right:20px;
+    font-family:'Archivo Black',sans-serif;font-size:34px;line-height:1;
+    color:transparent;-webkit-text-stroke:1px var(--signal-dim);
+    transition:color .25s var(--ease);
+  }
+  .pipeline article:hover::before{color:var(--signal)}
+  .pipeline .p-step{font-family:'Space Mono',monospace;font-size:11px;color:var(--signal);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .pipeline .p-step::before{content:"";width:16px;height:1px;background:var(--signal)}
+  .pipeline h3{font-size:18px;font-weight:700;margin-bottom:8px;padding-right:44px}
+  .pipeline p{font-size:14.5px;color:var(--muted)}
+
+  /* ---------- STORY CARDS ---------- */
+  .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:24px}
+  .story{
+    border:1px solid var(--line);padding:34px 30px;
+    display:flex;flex-direction:column;gap:12px;
+    text-decoration:none;position:relative;overflow:hidden;
+    transition:border-color .25s var(--ease),transform .25s var(--ease);
+    background:var(--ink);
+  }
+  .story::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--amber),transparent);
+    transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease);
+  }
+  .story:hover{border-color:var(--amber);transform:translateY(-4px)}
+  .story:hover::before{transform:scaleX(1)}
+  .side-b .story::before{background:linear-gradient(90deg,var(--signal),transparent)}
+  .side-b .story:hover{border-color:var(--signal)}
+  .story .s-tag{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  .side-b .story .s-tag{color:var(--signal)}
+  .story h3{font-family:'Archivo Black',sans-serif;font-size:24px;text-transform:uppercase;line-height:1.05}
+  .story p{font-size:15px;color:var(--muted)}
+  .story .s-heart{margin-top:auto;padding-top:12px;font-family:'Space Mono',monospace;font-size:12px;color:var(--paper);border-top:1px solid var(--line)}
+  .story .s-heart em{color:var(--amber);font-style:normal}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:64px;align-items:start}
+  .about-grid .lede::first-letter{
+    font-family:'Archivo Black',sans-serif;font-size:64px;line-height:.8;
+    float:left;padding:6px 12px 0 0;color:var(--amber);
+  }
+  .about-grid p{margin-bottom:20px;font-size:18px}
+  .about-grid p strong{color:var(--amber)}
+  .stats{border:1px solid var(--line);background:var(--ink-2)}
+  .stats div{padding:22px 26px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+  .stats div:last-child{border-bottom:none}
+  .stats .big{font-family:'Archivo Black',sans-serif;font-size:38px;color:var(--amber);font-variant-numeric:tabular-nums}
+  .stats .lbl{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+
+  /* ---------- CONTACT ---------- */
+  .contact h2{margin-bottom:8px}
+  .contact .big-mail{
+    display:inline-block;text-decoration:none;
+    font-family:'Archivo Black',sans-serif;text-transform:lowercase;
+    font-size:clamp(26px,5.4vw,64px);line-height:1.05;
+    color:var(--paper);margin:18px 0 48px;
+    background-image:linear-gradient(var(--amber),var(--amber));
+    background-repeat:no-repeat;background-size:0% 4px;background-position:0 100%;
+    transition:background-size .45s var(--ease),color .3s;
+    padding-bottom:8px;word-break:break-all;
+  }
+  .contact .big-mail:hover{background-size:100% 4px;color:var(--amber)}
+  .contact-links{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .contact-links a{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    padding:24px 8px;border-bottom:1px solid var(--line);
+    text-decoration:none;font-weight:700;font-size:clamp(17px,2.6vw,26px);
+    transition:background .18s,padding-left .25s var(--ease),color .18s;
+  }
+  .contact-links a:hover{background:var(--ink-2);padding-left:18px;color:var(--amber)}
+  .contact-links .plat{font-family:'Space Mono',monospace;font-size:12px;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;flex-shrink:0}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:36px 24px;font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+  footer .fw{
+    max-width:var(--max);margin:0 auto;width:100%;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  }
+  .barcode{display:flex;align-items:flex-end;gap:2px;height:26px}
+  .barcode i{display:block;width:2px;background:var(--faint)}
+  .barcode i:nth-child(3n){width:4px}
+  .barcode i:nth-child(4n){background:var(--muted)}
+
+  /* ---------- REVEALS ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .stagger>*{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .stagger.in>*{opacity:1;transform:none}
+  .stagger.in>*:nth-child(1){transition-delay:.03s}.stagger.in>*:nth-child(2){transition-delay:.09s}
+  .stagger.in>*:nth-child(3){transition-delay:.15s}.stagger.in>*:nth-child(4){transition-delay:.21s}
+  .stagger.in>*:nth-child(5){transition-delay:.27s}.stagger.in>*:nth-child(6){transition-delay:.33s}
+  .stagger.in>*:nth-child(7){transition-delay:.39s}.stagger.in>*:nth-child(8){transition-delay:.45s}
+
+  @media (prefers-reduced-motion:reduce){
+    .vu i,.ticker,.rec::before,body::after{animation:none}
+    .vu i{transform:scaleY(.7)}
+    .reveal,.stagger>*{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+    .story:hover{transform:none}
+  }
+
+  @media (max-width:760px){
+    nav ul{
+      display:none;position:absolute;top:100%;left:0;right:0;
+      flex-direction:column;gap:0;
+      background:rgba(11,9,7,.97);border-bottom:1px solid var(--line);
+    }
+    nav ul.open{display:flex}
+    nav ul a{display:block;padding:16px 24px;border-top:1px solid var(--line)}
+    .nav-toggle{display:block}
+    .rec{display:none}
+    .about-grid{grid-template-columns:1fr;gap:40px}
+    .track{grid-template-columns:44px 1fr}
+    .track .t-meta{grid-column:2;text-align:left;margin-top:4px}
+    section{padding:80px 20px}
+    .idx{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="tapebar" aria-hidden="true"><i id="tape"></i></div>
+
+<nav>
+  <a class="logo" href="#top">JIMBO<span> G</span><span class="rec">REC</span></a>
+  <button class="nav-toggle" aria-label="Toggle menu" onclick="document.getElementById('menu').classList.toggle('open')">Menu</button>
+  <ul id="menu">
+    <li><a href="#listen">Listen</a></li>
+    <li><a href="#music">Side A</a></li>
+    <li><a href="#video">Side B</a></li>
+    <li><a href="#web">Side C</a></li>
+    <li><a href="#stories">Stories</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<header id="top">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Martinsville, Indiana <em>· est. in the underground</em></div>
+    <h1 class="display" aria-label="Jimbo G">
+      Jimbo <span class="g">G</span>
+      <span class="ghost" aria-hidden="true">Jimbo G</span>
+    </h1>
+    <div class="hero-alias">thamanwhosoldtheworld</div>
+    <div class="hero-roles stagger">
+      <div><span class="num">01 —</span><span class="role">Artist &amp; Producer</span></div>
+      <div><span class="num">02 —</span><span class="role">AI Media Innovator</span></div>
+      <div><span class="num">03 —</span><span class="role">Podcaster &amp; DJ</span></div>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-amber" href="#listen">▶ Listen Now</a>
+      <a class="btn btn-ghost" href="https://www.youtube.com/@JimboG-TheManWhoSoldTheWorld" target="_blank" rel="noopener">Watch on YouTube</a>
+    </div>
+    <div class="vu" aria-hidden="true" id="vu"></div>
+  </div>
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker">
+      <span>Rap</span><span>Rock</span><span>EDM</span><span>Sludge-Soul</span><span>Doom R&amp;B</span><span>Chopper Rap</span><span>Worship</span><span>20+ Years Deep</span>
+      <span>Rap</span><span>Rock</span><span>EDM</span><span>Sludge-Soul</span><span>Doom R&amp;B</span><span>Chopper Rap</span><span>Worship</span><span>20+ Years Deep</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LISTEN ============ -->
+<section id="listen" class="side-a">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">00</div>
+    <span class="side-label reveal">Now Playing · Stream</span>
+    <h2 class="display reveal">Listen</h2>
+    <p class="section-intro reveal">Every platform, one artist. Songs that live between <strong>confession and distortion</strong> — chopper rap to doom R&amp;B to worship, because the song comes first and the lane comes never. Full catalog and latest drops at <a href="https://jimbogmusic.com" target="_blank" rel="noopener">jimbogmusic.com</a>.</p>
+
+    <div class="platforms stagger">
+      <a class="platform pri" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="p-tag">Official</span>
+        <span class="p-name">Music Hub</span>
+        <span class="p-handle">jimbogmusic.com</span>
+      </a>
+      <a class="platform" href="https://open.spotify.com/artist/2SOPsk10xOOjO0M1oyNCmu" target="_blank" rel="noopener">
+        <span class="p-tag">Stream</span>
+        <span class="p-name">Spotify</span>
+        <span class="p-handle">Jimbo G</span>
+      </a>
+      <a class="platform" href="https://music.apple.com/us/artist/jimbo-g/282378534" target="_blank" rel="noopener">
+        <span class="p-tag">Stream</span>
+        <span class="p-name">Apple Music</span>
+        <span class="p-handle">Jimbo G</span>
+      </a>
+      <a class="platform" href="https://www.youtube.com/@JimboG-TheManWhoSoldTheWorld" target="_blank" rel="noopener">
+        <span class="p-tag">Watch</span>
+        <span class="p-name">YouTube</span>
+        <span class="p-handle">@JimboG-TheManWhoSoldTheWorld</span>
+      </a>
+      <a class="platform" href="https://soundcloud.com/jimbo-gtheone" target="_blank" rel="noopener">
+        <span class="p-tag">Stream</span>
+        <span class="p-name">SoundCloud</span>
+        <span class="p-handle">jimbo-gtheone</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIDE A: MUSIC ============ -->
+<section id="music" class="side-a">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">A</div>
+    <span class="side-label reveal">Side A · Music</span>
+    <h2 class="display reveal">The Sound</h2>
+    <p class="section-intro reveal">Original songs, full productions, and broadcast-ready masters. Every track is analyzed, mixed, and mastered to streaming spec — <strong>-14 LUFS integrated, -1.0 dBTP true peak, full EBU R128 pipeline</strong>. Stream it all above, or dig the full catalog at <a href="https://jimbogmusic.com" target="_blank" rel="noopener">jimbogmusic.com</a>.</p>
+
+    <div class="tracklist stagger">
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A1</span>
+        <span><span class="t-title">Show Me the Love of the Father</span><span class="t-sub">Dual-timeline redemption arc — full AI music video produced for U4-Ria (Maik Lankau)</span></span>
+        <span class="t-meta">Client · U4-Ria</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A2</span>
+        <span><span class="t-title">Saint Trust Me</span><span class="t-sub">Mastered to spec · full beat map &amp; video script</span></span>
+        <span class="t-meta">Single</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A3</span>
+        <span><span class="t-title">I Praise You (Even When the Stars Fall from the Sky)</span><span class="t-sub">40-shot cinematic music video — produced for U4-Ria (Maik Lankau)</span></span>
+        <span class="t-meta">Client · U4-Ria</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A4</span>
+        <span><span class="t-title">Bullet</span><span class="t-sub">Original · thamanwhosoldtheworld</span></span>
+        <span class="t-meta">Single</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A5</span>
+        <span><span class="t-title">Now I Lay Me</span><span class="t-sub">Original · reference-matched master &amp; release campaign</span></span>
+        <span class="t-meta">Single</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A6</span>
+        <span><span class="t-title">Already Gone</span><span class="t-sub">Original songwriting &amp; production</span></span>
+        <span class="t-meta">Single</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A7</span>
+        <span><span class="t-title">Never Be Lonely</span><span class="t-sub">Original songwriting &amp; production</span></span>
+        <span class="t-meta">Single</span>
+      </a>
+      <a class="track" href="https://jimbogmusic.com" target="_blank" rel="noopener">
+        <span class="no">A8</span>
+        <span><span class="t-title">No Silence</span><span class="t-sub">Anthology in progress — mental health, trauma, resilience</span></span>
+        <span class="t-meta">Anthology</span>
+      </a>
+    </div>
+
+    <div class="chips reveal">
+      <span>Songwriting</span><span>Production</span><span>Multi-Instrumentalist</span><span>Mixing</span><span>Mastering (EBU R128)</span><span>Spectral Analysis</span><span>DJ Sets</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIDE B: AI VIDEO ============ -->
+<section id="video" class="side-b">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">B</div>
+    <span class="side-label reveal">Side B · AI Video</span>
+    <h2 class="display reveal">The Machine</h2>
+    <p class="section-intro reveal">A repeatable, engineered pipeline for AI music video production — built from scratch, tested on real releases. This isn't prompt-and-pray. It's <strong>a custom-built Music Video Maker app</strong> that turns a finished track into a shot-by-shot production plan.</p>
+
+    <a class="client-feature reveal" href="https://www.tiktok.com/@maiklankau1" target="_blank" rel="noopener">
+      <div class="cf-label">Featured Client Work</div>
+      <div class="cf-body">
+        <h3>U4-Ria <span class="cf-x">×</span> Jimbo G</h3>
+        <p>Ongoing video production for U4-Ria, the Christian rock worship project of Maik Lankau — including "Show Me the Love of the Father" and "I Praise You (Even When the Stars Fall from the Sky)." Every video produced through the pipeline below. Watch on TikTok →</p>
+      </div>
+      <div class="cf-stat">
+        <div class="cf-num" data-count="50" data-suffix="K+">50K+</div>
+        <div class="cf-lbl">Views per video<br>on the band's TikTok alone</div>
+      </div>
+    </a>
+
+    <div class="pipeline stagger">
+      <article>
+        <div class="p-step">Signal In</div>
+        <h3>Drop Detection &amp; Energy Mapping</h3>
+        <p>The track is analyzed for drops, builds, and dynamics — visualized as an energy map that drives the edit before a single frame is generated.</p>
+      </article>
+      <article>
+        <div class="p-step">Script</div>
+        <h3>Shot-by-Shot Prompt Generation</h3>
+        <p>Full scripts broken into individual shots with narrative and performance cuts, timed to the beat map.</p>
+      </article>
+      <article>
+        <div class="p-step">Look</div>
+        <h3>Style DNA Extraction</h3>
+        <p>A consistent visual identity extracted and enforced across every shot, so the video reads as one world — not a slideshow of AI clips.</p>
+      </article>
+      <article>
+        <div class="p-step">Cast</div>
+        <h3>Character Anchor Locking</h3>
+        <p>Multi-character anchor images lock faces and wardrobe across generations. Face drift — the #1 tell of AI video — solved at the pipeline level.</p>
+      </article>
+      <article>
+        <div class="p-step">Translate</div>
+        <h3>Dialect Translation</h3>
+        <p>Every prompt automatically translated into the native "dialect" of each generator — Grok Imagine, Runway, Kling, Pika — for maximum fidelity per platform.</p>
+      </article>
+      <article>
+        <div class="p-step">Signal Out</div>
+        <h3>Edit &amp; Finish</h3>
+        <p>Assembled and finished in Adobe Premiere with color, pacing, and connective filler shots designed in deliberate temperature pairs.</p>
+      </article>
+    </div>
+
+    <div class="chips reveal">
+      <span>Suno</span><span>Grok Imagine</span><span>Midjourney</span><span>Runway</span><span>Kling</span><span>Pika</span><span>Premiere Pro</span><span>Photoshop</span><span>React</span><span>Python Audio Analysis</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIDE C: WEB & CODE ============ -->
+<section id="web" class="side-b">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">C</div>
+    <span class="side-label reveal">Side C · Web &amp; Code</span>
+    <h2 class="display reveal">The Build</h2>
+    <p class="section-intro reveal">Working developer, not just a creative who dabbles. Currently pursuing a <strong>B.S. in Computer Science</strong>, building production tools and running live client sites.</p>
+
+    <div class="stories stagger">
+      <a class="story" href="https://hadleyconstruction.net" target="_blank" rel="noopener">
+        <span class="s-tag">Live Client Site</span>
+        <h3>Hadley Construction Group</h3>
+        <p>Full company website for a Central Indiana roofing and construction firm — designed, built, and managed end to end. SEO-optimized and analytically tracked, so every visit and lead is measured, not guessed.</p>
+        <div class="s-heart">hadleyconstruction.net · Design · SEO · Analytics</div>
+      </a>
+      <div class="story">
+        <span class="s-tag">Custom App</span>
+        <h3>Music Video Maker</h3>
+        <p>A React application built from scratch: shot-by-shot prompt generation, per-generator dialect translation, Style DNA extraction, drop detection with energy map visualization, and multi-character anchor locking.</p>
+        <div class="s-heart">React · Audio analysis · AI pipeline engineering</div>
+      </div>
+      <div class="story">
+        <span class="s-tag">In Progress</span>
+        <h3>B.S. Computer Science</h3>
+        <p>Currently in school for a bachelor's in computer science — stacked on top of a DeVry web design certificate and a strong GPA. The tools get sharper every semester.</p>
+        <div class="s-heart">Building while learning · Learning while building</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORIES ============ -->
+<section id="stories" class="side-a">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">D</div>
+    <span class="side-label reveal">Bonus Tracks · Storytelling</span>
+    <h2 class="display reveal">The Worlds</h2>
+    <p class="section-intro reveal">Beyond the music: original shows and characters built for audiences from the underground to the campfire.</p>
+
+    <div class="stories stagger">
+      <a class="story" href="https://www.facebook.com/undergroundwjimbog/" target="_blank" rel="noopener">
+        <span class="s-tag">Podcast</span>
+        <h3>Under the Ground with Jimbo G</h3>
+        <p>Conversations from the underside of music and culture — hosted, produced, and cut by Jimbo. Real talk from someone who's lived it, not studied it.</p>
+        <div class="s-heart">Creator · Host · Producer</div>
+      </a>
+      <div class="story">
+        <span class="s-tag">Kids' Series</span>
+        <h3>Tasty Travels</h3>
+        <p>A warm animated series in development for kids' YouTube — Frankie, Tony, Nikki, Suki, Hero, and Raju, narrated grandpa-at-the-campfire style with an acoustic guitar.</p>
+        <div class="s-heart">Core: <em>"Everything's better together."</em></div>
+      </div>
+      <div class="story">
+        <span class="s-tag">AI Storytelling</span>
+        <h3>Thea and Bob</h3>
+        <p>Original AI-driven characters in an ongoing storytelling experiment — testing how far character consistency and narrative can be pushed with current tools.</p>
+        <div class="s-heart">World-building · In development</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="side-a">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">≡</div>
+    <span class="side-label reveal">Liner Notes</span>
+    <h2 class="display reveal">The Story</h2>
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="lede">Jimbo G — Jimmie D. Gammon Jr. — has spent <strong>over twenty years</strong> inside music and entertainment, including two decades behind the counter at Karma Records, where the underground wasn't a genre. It was the day job.</p>
+        <p>He plays multiple instruments, writes constantly, draws, and is covered in tattoos that tell most of the story before he says a word. His range runs from chopper rap to doom R&amp;B to worship — because the song comes first and the lane comes never.</p>
+        <p>Now he works at the collision point of that analog history and the AI frontier: building custom production tools, engineering AI video pipelines pulling 50k+ views per video for client bands, running SEO-driven client websites, and studying for a computer science degree — proving one independent artist with deep curiosity can run what used to take a full crew.</p>
+        <p>He's a father of two. That's the reason for all of it.</p>
+      </div>
+      <div class="stats stagger">
+        <div><div class="big" data-count="20" data-suffix="+">0+</div><div class="lbl">Years in music &amp; entertainment</div></div>
+        <div><div class="big" data-count="50" data-suffix="K+">0K+</div><div class="lbl">Views per client video · U4-Ria on TikTok</div></div>
+        <div><div class="big">B.S. CS</div><div class="lbl">Computer science — in progress · DeVry web design certified</div></div>
+        <div><div class="big">∞</div><div class="lbl">Genres — refuses to pick one</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="contact side-a">
+  <div class="wrap">
+    <div class="idx" aria-hidden="true">→</div>
+    <span class="side-label reveal">Get In Touch</span>
+    <h2 class="display reveal">Let's Build</h2>
+    <a class="big-mail reveal" href="mailto:jimbogfm@gmail.com">jimbogfm@gmail.com</a>
+    <div class="contact-links stagger">
+      <a href="https://jimbogmusic.com" target="_blank" rel="noopener"><span>jimbogmusic.com</span><span class="plat">Music Hub</span></a>
+      <a href="https://open.spotify.com/artist/2SOPsk10xOOjO0M1oyNCmu" target="_blank" rel="noopener"><span>Jimbo G</span><span class="plat">Spotify</span></a>
+      <a href="https://music.apple.com/us/artist/jimbo-g/282378534" target="_blank" rel="noopener"><span>Jimbo G</span><span class="plat">Apple Music</span></a>
+      <a href="https://www.youtube.com/@JimboG-TheManWhoSoldTheWorld" target="_blank" rel="noopener"><span>@JimboG-TheManWhoSoldTheWorld</span><span class="plat">YouTube</span></a>
+      <a href="https://instagram.com/the_man_who_sold_the_world.77" target="_blank" rel="noopener"><span>the_man_who_sold_the_world.77</span><span class="plat">Instagram</span></a>
+      <a href="https://soundcloud.com/jimbo-gtheone" target="_blank" rel="noopener"><span>jimbo-gtheone</span><span class="plat">SoundCloud</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fw">
+    <span>© 2026 Jimmie D. Gammon Jr. · Jimbo G · thamanwhosoldtheworld</span>
+    <div class="barcode" aria-hidden="true">
+      <i style="height:100%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:100%"></i><i style="height:65%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:50%"></i><i style="height:95%"></i><i style="height:75%"></i><i style="height:100%"></i><i style="height:60%"></i><i style="height:85%"></i><i style="height:100%"></i>
+    </div>
+    <span>Martinsville, IN · Recorded live from the underground</span>
+  </div>
+</footer>
+
+<div class="counter" aria-hidden="true">TAPE&nbsp;<b id="tapecount">000</b>&nbsp;/ 100</div>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* build the VU wall */
+  (() => {
+    const vu = document.getElementById('vu');
+    const bars = 46;
+    let html = '';
+    for (let i = 0; i < bars; i++) {
+      const h = 25 + Math.round(70 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * .6)));
+      const d = ((i * 137) % 140) / 100;
+      html += `<i style="height:${h}%;animation-delay:${d}s"></i>`;
+    }
+    vu.innerHTML = html;
+  })();
+
+  /* tape progress + counter */
+  const tape = document.getElementById('tape');
+  const tapecount = document.getElementById('tapecount');
+  addEventListener('scroll', () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const p = max > 0 ? scrollY / max : 0;
+    tape.style.width = (p * 100) + '%';
+    if (tapecount) tapecount.textContent = String(Math.round(p * 100)).padStart(3, '0');
+  }, { passive: true });
+
+  /* reveals + staggered groups */
+  const obs = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal,.stagger').forEach(el => obs.observe(el));
+
+  /* animated counters */
+  const cObs = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      cObs.unobserve(e.target);
+      const el = e.target, end = +el.dataset.count, suf = el.dataset.suffix || '';
+      if (reduced) { el.textContent = end + suf; return; }
+      const t0 = performance.now(), dur = 1100;
+      (function tick(t) {
+        const p = Math.min((t - t0) / dur, 1);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))) + suf;
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }, { threshold: .6 });
+  document.querySelectorAll('[data-count]').forEach(el => cObs.observe(el));
+
+  /* close mobile menu on link click */
+  document.querySelectorAll('#menu a').forEach(a => a.addEventListener('click', () => {
+    document.getElementById('menu').classList.remove('open');
+  }));
+</script>
+</body>
+</html>

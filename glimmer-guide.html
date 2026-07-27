@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jetpack Compose Glimmer | Developer Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-link { transition: all 0.2s ease-in-out; }
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #1e293b;
+            color: #38bdf8;
+            transform: translateX(4px);
+        }
+        pre, code { font-family: 'Roboto Mono', monospace; }
+        pre {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #1e293b;
+            overflow-x: auto;
+        }
+        .code-block { position: relative; }
+        .copy-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            font-size: 0.7rem; letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+        }
+        .inline-tag {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #1e293b; color: #38bdf8;
+            padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.85em;
+        }
+        .page-section { scroll-margin-top: 1.5rem; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-slate-900 text-slate-300 p-6 hidden md:flex md:flex-col overflow-y-auto">
+            <div class="mb-8">
+                <h1 class="text-xl font-extrabold text-white leading-tight">Jetpack&nbsp;Compose</h1>
+                <p class="text-2xl font-extrabold text-sky-400 leading-tight">Glimmer</p>
+                <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Developer Guide</p>
+            </div>
+            <nav class="space-y-1 flex-1">
+                <a href="#overview" class="sidebar-link active flex items-center p-3 rounded-lg font-medium text-sm">Overview</a>
+                <a href="#setup" class="sidebar-link flex items-center p-3 rounded-lg font-medium text-sm">1 · Setup &amp; Theming</a>
+                <a href="#components" class="sidebar-link flex items-center p-3 rounded-lg font-medium text-sm">2 · Basic Components</a>
+                <a href="#layout" class="sidebar-link flex items-center p-3 rounded-lg font-medium text-sm">3 · Layout &amp; Containers</a>
+                <a href="#build" class="sidebar-link flex items-center p-3 rounded-lg font-medium text-sm">4 · Build &amp; Test</a>
+                <a href="#considerations" class="sidebar-link flex items-center p-3 rounded-lg font-medium text-sm">5 · Key Considerations</a>
+            </nav>
+            <p class="text-xs text-slate-600 mt-6">Practical reference for building<br>AR interfaces for AI Glasses.</p>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Mobile header -->
+            <div class="md:hidden bg-slate-900 text-white p-4 sticky top-0 z-10">
+                <h1 class="font-extrabold">Jetpack Compose <span class="text-sky-400">Glimmer</span></h1>
+            </div>
+
+            <div class="max-w-4xl mx-auto p-4 md:p-10 space-y-12">
+
+                <!-- Overview -->
+                <section id="overview" class="page-section">
+                    <span class="inline-block bg-sky-100 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">AR · Smart Glasses</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900">Building for AI Glasses</h2>
+                    <p class="text-lg text-slate-600 mt-3">
+                        <strong>Jetpack Compose Glimmer</strong> is a UI toolkit for building augmented reality
+                        interfaces on transparent, additive displays. This guide collects the practical code
+                        snippets and configuration you need to get an app running and tested.
+                    </p>
+                    <div class="grid sm:grid-cols-3 gap-4 mt-6">
+                        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
+                            <p class="text-2xl">🕶️</p>
+                            <p class="font-semibold mt-1">Additive displays</p>
+                            <p class="text-sm text-slate-500">Black renders as transparent — design bright content on dark surfaces.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
+                            <p class="text-2xl">🎯</p>
+                            <p class="font-semibold mt-1">Focus navigation</p>
+                            <p class="text-sm text-slate-500">No touchscreen — interactions run through touchpad and focus.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
+                            <p class="text-2xl">🔠</p>
+                            <p class="font-semibold mt-1">Large scale</p>
+                            <p class="text-sm text-slate-500">Typography is sized for viewing distance (<span class="inline-tag">TitleLarge</span> = 30sp).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Setup & Theming -->
+                <section id="setup" class="page-section">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-slate-200 pb-3">1 · Setup &amp; Theming</h2>
+                    <p class="text-slate-600 mt-4">
+                        Glimmer uses a specialized theme optimized for transparent displays. <strong>Google Sans Flex</strong>
+                        is recommended for maximum legibility.
+                    </p>
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Global theme setup</h3>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>@Composable
+fun MyApp() {
+    // Create the specialized typography for AI glasses
+    val typography = createGoogleSansFlexTypography()
+
+    GlimmerTheme(typography = typography) {
+        // Your app content here
+        MainScreen()
+    }
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Components -->
+                <section id="components" class="page-section">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-slate-200 pb-3">2 · Basic Components</h2>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Buttons</h3>
+                    <p class="text-slate-600 mb-3">Buttons handle depth and borders automatically for optical displays.</p>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>@Composable
+fun ButtonExamples() {
+    // Standard Button
+    Button(onClick = { /* Handle click */ }) {
+        Text("Standard Action")
+    }
+
+    // Button with Leading Icon
+    Button(
+        onClick = { /* Handle click */ },
+        leadingIcon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite") }
+    ) {
+        Text("Like")
+    }
+}</code></pre>
+                    </div>
+
+                    <h3 class="text-lg font-semibold mt-8 mb-2">Text &amp; Typography</h3>
+                    <p class="text-slate-600 mb-3">Text intelligently matches the background surface color, defaulting to high-contrast white.</p>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>@Composable
+fun TextExamples() {
+    Column {
+        Text(
+            text = "Main Heading",
+            style = GlimmerTheme.typography.titleLarge
+        )
+        Text(
+            text = "Body content for glasses",
+            style = GlimmerTheme.typography.bodySmall
+        )
+    }
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Layout & Containers -->
+                <section id="layout" class="page-section">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-slate-200 pb-3">3 · Layout &amp; Containers</h2>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Cards</h3>
+                    <p class="text-slate-600 mb-3">Cards are the primary way to group information and fill the maximum width by default.</p>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>@Composable
+fun CardExample() {
+    Card(
+        title = { Text("Event Notification") },
+        header = {
+            Image(
+                painter = painterResource(id = R.drawable.header_image),
+                contentDescription = "Header",
+                contentScale = ContentScale.FillWidth
+            )
+        },
+        action = {
+            Button(onClick = { /* Action */ }) {
+                Text("View Details")
+            }
+        }
+    ) {
+        Text("You have a new meeting starting in 5 minutes.")
+    }
+}</code></pre>
+                    </div>
+
+                    <h3 class="text-lg font-semibold mt-8 mb-2">Vertical lists</h3>
+                    <p class="text-slate-600 mb-3"><span class="inline-tag">VerticalList</span> is optimized for touchpad / focus-based navigation rather than direct touch.</p>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>@Composable
+fun ListExample() {
+    val items = listOf("Home", "Messages", "Settings", "Help")
+
+    VerticalList(
+        title = { TitleChip { Text("Main Menu") } }
+    ) {
+        items(items) { label ->
+            ListItem(onClick = { /* Handle selection */ }) {
+                Text(label)
+            }
+        }
+    }
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Build & Test -->
+                <section id="build" class="page-section">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-slate-200 pb-3">4 · Build &amp; Test</h2>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Required tools</h3>
+                    <ul class="list-disc list-inside text-slate-600 space-y-1 mb-4">
+                        <li><strong>IDE:</strong> Android Studio — latest <strong>Canary</strong> build (required for full XR preview &amp; emulator support).</li>
+                        <li><strong>OS:</strong> Windows, macOS, or Linux.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Project configuration</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm bg-white rounded-lg overflow-hidden shadow-sm border border-slate-200 mb-4">
+                            <thead class="bg-slate-100 text-left">
+                                <tr><th class="p-3 font-semibold">Setting</th><th class="p-3 font-semibold">Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-100"><td class="p-3"><span class="inline-tag">minSdk</span></td><td class="p-3">24</td></tr>
+                                <tr class="border-t border-slate-100"><td class="p-3"><span class="inline-tag">compileSdk</span></td><td class="p-3">34 or higher</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Dependencies <span class="text-slate-400 font-normal text-sm">(app/build.gradle.kts)</span></h3>
+                    <div class="code-block">
+                        <button class="copy-btn bg-slate-700 text-slate-200 px-2 py-1 rounded hover:bg-slate-600">COPY</button>
+                        <pre class="rounded-lg p-4 text-sm"><code>dependencies {
+    // Core XR Runtime
+    implementation("androidx.xr.runtime:runtime:1.0.0-alpha14")
+
+    // Glimmer UI Toolkit
+    implementation("androidx.xr.glimmer:glimmer:1.0.0-alpha12")
+    implementation("androidx.xr.glimmer:glimmer-google-fonts:1.0.0-alpha12")
+
+    // Additional XR support
+    implementation("androidx.xr.projected:projected:1.0.0-alpha07")
+    implementation("androidx.xr.arcore:arcore:1.0.0-alpha13")
+}</code></pre>
+                    </div>
+
+                    <h3 class="text-lg font-semibold mt-8 mb-2">Composable previews</h3>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-1 mb-4">
+                        <li>Annotate your composable with <span class="inline-tag">@Preview</span>.</li>
+                        <li>In the Preview configuration picker, select <strong>AI Glasses</strong> from the Device drop-down.</li>
+                        <li>Use the Environment icon to simulate lighting (Light, Dark, Busy) and test transparency &amp; contrast.</li>
+                    </ol>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Android XR Emulator</h3>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                        <li>Open the <strong>Device Manager</strong> in Android Studio.</li>
+                        <li>Create a new virtual device using the <strong>Android XR</strong> system image.</li>
+                        <li>Run your app to test focus-based navigation and touchpad interactions.</li>
+                    </ol>
+                </section>
+
+                <!-- Key Considerations -->
+                <section id="considerations" class="page-section pb-16">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-slate-200 pb-3">5 · Key Considerations</h2>
+                    <div class="grid sm:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+                            <p class="font-semibold text-slate-900">Additive displays</p>
+                            <p class="text-sm text-slate-600 mt-1">Black is 100% transparent on glasses. Test your UI against bright backgrounds to ensure legibility.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+                            <p class="font-semibold text-slate-900">No touchscreen</p>
+                            <p class="text-sm text-slate-600 mt-1">Focus on indirect pointer inputs (touchpad / gestures). Ensure every interactive element is focusable.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+                            <p class="font-semibold text-slate-900">Google Sans Flex</p>
+                            <p class="text-sm text-slate-600 mt-1">Add the <span class="inline-tag">glimmer-google-fonts</span> dependency to use the optimized variable font.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+                            <p class="font-semibold text-slate-900">Large-scale typography</p>
+                            <p class="text-sm text-slate-600 mt-1">Type is much larger than mobile to account for viewing distance and glasses resolution.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Copy-to-clipboard for code blocks
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const code = btn.parentElement.querySelector('code').innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    const original = btn.textContent;
+                    btn.textContent = 'COPIED';
+                    setTimeout(() => { btn.textContent = original; }, 1500);
+                });
+            });
+        });
+
+        // Active link highlighting via scroll position
+        const links = document.querySelectorAll('.sidebar-link');
+        const sections = document.querySelectorAll('.page-section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+        sections.forEach(s => observer.observe(s));
+    </script>
+</body>
+</html>
